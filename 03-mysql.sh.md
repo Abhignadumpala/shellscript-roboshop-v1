@@ -1,6 +1,6 @@
 # 03-mysql.sh: MySQL Server
 
-[← Server notes](README.md) · [Project README](../../README.md) · [Scripts walkthrough](../scripts-walkthrough.md)
+[← Project README](README.md) · [Common part of every script](00-common-part.md) · [Scripts walkthrough](docs/scripts-walkthrough.md)
 
 ## What this server does
 
@@ -45,7 +45,7 @@ timestamp(){ ... }
 validate(){ ... }
 ```
 
-**What it does:** settings, root check, log folder, and the `timestamp` + `validate` helpers. Same in every script; explained line by line in the [server notes index](README.md#the-common-part-top-of-every-script).
+**What it does:** settings, root check, log folder, and the `timestamp` + `validate` helpers. Same in every script; explained line by line in the [server notes index](00-common-part.md#the-common-part-top-of-every-script).
 
 ### 5. Install MySQL 8.4
 
@@ -182,7 +182,7 @@ echo "$(timestamp) [INFO] ==== Script completed execution ======" | tee -a $logs
 
 ## Run + result
 
-![03-mysql.sh run](../images/handson/03-mysql-run.png)
+![03-mysql.sh run](docs/images/handson/03-mysql-run.png)
 
 ## Verify
 

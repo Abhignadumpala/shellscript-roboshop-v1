@@ -1,17 +1,17 @@
-# Server Notes: One Note per Script
+# Common Part of Every Script + Index of Script Notes
 
-[← Back to project README](../../README.md) · [Scripts walkthrough](../scripts-walkthrough.md)
+[← Back to project README](README.md) · [Scripts walkthrough](docs/scripts-walkthrough.md)
 
-Each note explains **one script**: what the server does, the full code, every line, how I ran it, how I checked it, and the problems I hit.
+Each script has its explanation **right below it** in the folder (`<script>.sh.md`). Each note explains **one script**: what the server does, the full code, every line, how I ran it, how I checked it, and the problems I hit.
 
 | # | Note | Server | Port | Status |
 |---|------|--------|------|--------|
-| 0 | [roboshop.sh](00-roboshop-sh.md) | my laptop | – | ✅ creates EC2 + DNS |
-| 1 | [01-mongodb.sh](01-mongodb.md) | mongodb | 27017 | ✅ |
-| 2 | [02-redis.sh](02-redis.md) | redis | 6379 | ✅ 21 s |
-| 3 | [03-mysql.sh](03-mysql.md) | mysql | 3306 | ✅ 40 s |
-| 4 | [04-rabbitmq.sh](04-rabbitmq.md) | rabbitmq | 5672 | ✅ 36 s |
-| 5 | [05-catalogue.sh](05-catalogue.md) | catalogue | 8080 | ✅ 63 s |
+| 0 | [roboshop.sh](roboshop.sh.md) | my laptop | – | ✅ creates EC2 + DNS |
+| 1 | [01-mongodb.sh](01-mongodb.sh.md) | mongodb | 27017 | ✅ |
+| 2 | [02-redis.sh](02-redis.sh.md) | redis | 6379 | ✅ 21 s |
+| 3 | [03-mysql.sh](03-mysql.sh.md) | mysql | 3306 | ✅ 40 s |
+| 4 | [04-rabbitmq.sh](04-rabbitmq.sh.md) | rabbitmq | 5672 | ✅ 36 s |
+| 5 | [05-catalogue.sh](05-catalogue.sh.md) | catalogue | 8080 | ✅ 63 s |
 | 6–11 | user, cart, shipping, payment, dispatch, frontend | | | next |
 
 ---

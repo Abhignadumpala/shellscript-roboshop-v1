@@ -1,6 +1,6 @@
 # 05-catalogue.sh: Catalogue Server
 
-[← Server notes](README.md) · [Project README](../../README.md) · [Scripts walkthrough](../scripts-walkthrough.md)
+[← Project README](README.md) · [Common part of every script](00-common-part.md) · [Scripts walkthrough](docs/scripts-walkthrough.md)
 
 ## What this server does
 
@@ -391,11 +391,11 @@ echo "$(timestamp) [INFO] ==== Script completed execution ======" | tee -a $logs
 
 ## Run + result
 
-![catalogue.service](../images/handson/05-catalogue-service.png)
+![catalogue.service](docs/images/handson/05-catalogue-service.png)
 
 `/health` → `{"app":"OK","mongo":true}`, `/products` → all **11 products**.
 
-![05-catalogue.sh run, health and products](../images/handson/05-catalogue-run-health-products.png)
+![05-catalogue.sh run, health and products](docs/images/handson/05-catalogue-run-health-products.png)
 
 ## Verify
 
@@ -420,7 +420,7 @@ journalctl -u catalogue -n 20              # app log
 | Re-run ignored a changed service file | `start` on a running service does nothing | `restart` + `validate` at the end |
 | Download URL broken | Long line got cut when pasting | `bash -n` + `curl -sI <url>` → 200 |
 
-More: [all problems and fixes](../troubleshooting.md) · [Traffic flow: incoming and outgoing](../traffic-flow-incoming-outgoing.md)
+More: [all problems and fixes](docs/troubleshooting.md) · [Traffic flow: incoming and outgoing](docs/traffic-flow-incoming-outgoing.md)
 
 ---
 

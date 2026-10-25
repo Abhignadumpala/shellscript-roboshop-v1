@@ -1,6 +1,6 @@
 # roboshop.sh: Create Servers + DNS Records
 
-[← Server notes](README.md) · [Project README](../../README.md) · [Scripts walkthrough](../scripts-walkthrough.md)
+[← Project README](README.md) · [Common part of every script](00-common-part.md) · [Scripts walkthrough](docs/scripts-walkthrough.md)
 
 ## What it does
 
@@ -218,7 +218,7 @@ mongodb IP: 172.31.0.236
 DNS updated: mongodb.abhignadevops.store -> 172.31.0.236
 ```
 
-![roboshop.sh catalogue](../images/handson/05-roboshop-sh-catalogue.png)
+![roboshop.sh catalogue](docs/images/handson/05-roboshop-sh-catalogue.png)
 
 ---
 

@@ -56,12 +56,19 @@
 
 ```
 shellscript-roboshop-v1/
+├── 00-common-part.md      # common part of every script, explained once
 ├── roboshop.sh            # laptop: create EC2 instances + Route 53 records
+├── roboshop.sh.md         #   ↳ explanation of roboshop.sh, block by block
 ├── 01-mongodb.sh          # mongodb server
+├── 01-mongodb.sh.md       #   ↳ explanation of 01-mongodb.sh, block by block
 ├── 02-redis.sh            # redis server
+├── 02-redis.sh.md         #   ↳ explanation of 02-redis.sh, block by block
 ├── 03-mysql.sh            # mysql server
+├── 03-mysql.sh.md         #   ↳ explanation of 03-mysql.sh, block by block
 ├── 04-rabbitmq.sh         # rabbitmq server
+├── 04-rabbitmq.sh.md      #   ↳ explanation of 04-rabbitmq.sh, block by block
 ├── 05-catalogue.sh        # catalogue server
+├── 05-catalogue.sh.md     #   ↳ explanation of 05-catalogue.sh, block by block
 ├── mongo.repo             # MongoDB 7.0 repo (server + mongosh client)
 ├── rabbitmq.repo          # Erlang + RabbitMQ repos
 ├── catalogue.service      # systemd unit with a DOMAIN_NAME placeholder
@@ -70,7 +77,6 @@ shellscript-roboshop-v1/
     ├── troubleshooting.md       # problems I hit + fixes
     ├── debugging-guide.md       # which error → what to check, logs per server, real errors
     ├── interview-questions.md
-    ├── servers/                 # one note per script: code, line by line, run, verify, problems
     ├── roboshop-journey.md      # manual → shell scripts → Git + CI/CD, every error as one story
     ├── traffic-flow-incoming-outgoing.md   # who calls whom: address files, SG rules, config changes
     └── images/
@@ -91,12 +97,12 @@ shellscript-roboshop-v1/
 
 | # | Script | Component | Status | Run time (measured) | Explained (block by block) |
 |---|--------|-----------|--------|---------------------|----------------------------|
-| 00 | [roboshop.sh](roboshop.sh) | EC2 + Route 53 | ✅ Done | - | [📖 notes](docs/servers/00-roboshop-sh.md) |
-| 01 | [01-mongodb.sh](01-mongodb.sh) | MongoDB 7.0 | ✅ Done | - | [📖 notes](docs/servers/01-mongodb.md) |
-| 02 | [02-redis.sh](02-redis.sh) | Redis 7 | ✅ Done | 21 s | [📖 notes](docs/servers/02-redis.md) |
-| 03 | [03-mysql.sh](03-mysql.sh) | MySQL 8.4.11 | ✅ Done (+ root@localhost bug found and fixed) | 40 s | [📖 notes](docs/servers/03-mysql.md) |
-| 04 | [04-rabbitmq.sh](04-rabbitmq.sh) | RabbitMQ | ✅ Done, re-run safe | 36 s (re-run: 86 s, SKIPPING the user) | [📖 notes](docs/servers/04-rabbitmq.md) |
-| 05 | [05-catalogue.sh](05-catalogue.sh) | Catalogue | ✅ Done: `/health` OK, 11 products, re-run safe | 63 s | [📖 notes](docs/servers/05-catalogue.md) |
+| 00 | [roboshop.sh](roboshop.sh) | EC2 + Route 53 | ✅ Done | - | [📖 notes](roboshop.sh.md) |
+| 01 | [01-mongodb.sh](01-mongodb.sh) | MongoDB 7.0 | ✅ Done | - | [📖 notes](01-mongodb.sh.md) |
+| 02 | [02-redis.sh](02-redis.sh) | Redis 7 | ✅ Done | 21 s | [📖 notes](02-redis.sh.md) |
+| 03 | [03-mysql.sh](03-mysql.sh) | MySQL 8.4.11 | ✅ Done (+ root@localhost bug found and fixed) | 40 s | [📖 notes](03-mysql.sh.md) |
+| 04 | [04-rabbitmq.sh](04-rabbitmq.sh) | RabbitMQ | ✅ Done, re-run safe | 36 s (re-run: 86 s, SKIPPING the user) | [📖 notes](04-rabbitmq.sh.md) |
+| 05 | [05-catalogue.sh](05-catalogue.sh) | Catalogue | ✅ Done: `/health` OK, 11 products, re-run safe | 63 s | [📖 notes](05-catalogue.sh.md) |
 | 06 | | User | ⏭️ Next | | |
 | 07–10 | | Cart, Shipping, Payment, Frontend | ⏭️ Planned | | |
 | - | | `common.sh` (shared functions) | ⏭️ Planned | | |
@@ -261,7 +267,7 @@ echo "$(timestamp) [INFO] script completed in $SECONDS seconds" | tee -a $logs_f
 | **Placeholders** | `mongodb.DOMAIN_NAME` in the unit file + `sed -i "s/DOMAIN_NAME/$domain_name/"` on the **copy** | Domain set in one variable; repo file stays unchanged |
 | **Validate the result** | `mysql -uroot -p... -e "SELECT VERSION();"` after setting the password | An exit code of 0 doesn't prove the password works (see bug below) |
 
-Full line-by-line explanation per script: [docs/servers/](docs/servers/README.md)
+Each script is explained block by block in `<script>.sh.md`, right below it (e.g. [05-catalogue.sh.md](05-catalogue.sh.md)). Common part: [00-common-part.md](00-common-part.md)
 
 ---
 
@@ -351,7 +357,7 @@ Full guide: [docs/debugging-guide.md](docs/debugging-guide.md)
 
 | Doc | What's inside |
 |-----|---------------|
-| [Server notes](docs/servers/README.md) | **One note per script**: [roboshop.sh](docs/servers/00-roboshop-sh.md) · [mongodb](docs/servers/01-mongodb.md) · [redis](docs/servers/02-redis.md) · [mysql](docs/servers/03-mysql.md) · [rabbitmq](docs/servers/04-rabbitmq.md) · [catalogue](docs/servers/05-catalogue.md) |
+| [Server notes](00-common-part.md) | **One note per script**: [roboshop.sh](roboshop.sh.md) · [mongodb](01-mongodb.sh.md) · [redis](02-redis.sh.md) · [mysql](03-mysql.sh.md) · [rabbitmq](04-rabbitmq.sh.md) · [catalogue](05-catalogue.sh.md) |
 | [Scripts walkthrough](docs/scripts-walkthrough.md) | Every script explained, with run screenshots |
 | [Troubleshooting](docs/troubleshooting.md) | Problems I hit, causes, fixes |
 | [Debugging guide](docs/debugging-guide.md) | Which error → what to check, logs per server, real class errors |
