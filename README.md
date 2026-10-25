@@ -6,6 +6,8 @@
 
 ![RoboShop architecture](images/architecture.png)
 
+![Who calls whom: every RoboShop server, its port and who it connects to](images/who-calls-whom.svg)
+
 ---
 
 ## What this project does
