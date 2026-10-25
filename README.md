@@ -2,7 +2,7 @@
 
 > Deploying the **RoboShop** e-commerce app (frontend, 6 microservices, 4 databases) on **AWS EC2** with **Bash** and the **AWS CLI**. One script creates the servers and DNS records, and one script per component installs and configures that service, with logging, validation and safe re-runs.
 
-📖 **Every script explained block by block, with hands-on screenshots and troubleshooting:** [roboshop-project-v1-shellscript](https://github.com/Abhignadumpala/roboshop-project-v1-shellscript)
+📖 **Every script explained block by block, with hands-on screenshots and troubleshooting:** [roboshop-project-v1-shellscript-notes](https://github.com/Abhignadumpala/roboshop-project-v1-shellscript-notes)
 
 ![RoboShop architecture](images/architecture.png)
 
@@ -37,12 +37,12 @@
 
 | Script | Runs on | What it does | Run time | Explained |
 |--------|---------|--------------|----------|-----------|
-| [roboshop.sh](roboshop.sh) | laptop | Creates EC2 instances + Route 53 records | – | [📖](https://github.com/Abhignadumpala/roboshop-project-v1-shellscript/blob/main/roboshop.sh.md) |
-| [01-mongodb.sh](01-mongodb.sh) | mongodb | MongoDB 7.0, open to other servers | – | [📖](https://github.com/Abhignadumpala/roboshop-project-v1-shellscript/blob/main/01-mongodb.sh.md) |
-| [02-redis.sh](02-redis.sh) | redis | Redis 7, `bind` + `protected-mode` | 21 s | [📖](https://github.com/Abhignadumpala/roboshop-project-v1-shellscript/blob/main/02-redis.sh.md) |
-| [03-mysql.sh](03-mysql.sh) | mysql | MySQL 8.4, root password + login check | 40 s | [📖](https://github.com/Abhignadumpala/roboshop-project-v1-shellscript/blob/main/03-mysql.sh.md) |
-| [04-rabbitmq.sh](04-rabbitmq.sh) | rabbitmq | RabbitMQ + app user (re-run safe) | 36 s | [📖](https://github.com/Abhignadumpala/roboshop-project-v1-shellscript/blob/main/04-rabbitmq.sh.md) |
-| [05-catalogue.sh](05-catalogue.sh) | catalogue | Node.js app, systemd service, products loaded once | 63 s | [📖](https://github.com/Abhignadumpala/roboshop-project-v1-shellscript/blob/main/05-catalogue.sh.md) |
+| [roboshop.sh](roboshop.sh) | laptop | Creates EC2 instances + Route 53 records | – | [📖](https://github.com/Abhignadumpala/roboshop-project-v1-shellscript-notes/blob/main/roboshop.sh.md) |
+| [01-mongodb.sh](01-mongodb.sh) | mongodb | MongoDB 7.0, open to other servers | – | [📖](https://github.com/Abhignadumpala/roboshop-project-v1-shellscript-notes/blob/main/01-mongodb.sh.md) |
+| [02-redis.sh](02-redis.sh) | redis | Redis 7, `bind` + `protected-mode` | 21 s | [📖](https://github.com/Abhignadumpala/roboshop-project-v1-shellscript-notes/blob/main/02-redis.sh.md) |
+| [03-mysql.sh](03-mysql.sh) | mysql | MySQL 8.4, root password + login check | 40 s | [📖](https://github.com/Abhignadumpala/roboshop-project-v1-shellscript-notes/blob/main/03-mysql.sh.md) |
+| [04-rabbitmq.sh](04-rabbitmq.sh) | rabbitmq | RabbitMQ + app user (re-run safe) | 36 s | [📖](https://github.com/Abhignadumpala/roboshop-project-v1-shellscript-notes/blob/main/04-rabbitmq.sh.md) |
+| [05-catalogue.sh](05-catalogue.sh) | catalogue | Node.js app, systemd service, products loaded once | 63 s | [📖](https://github.com/Abhignadumpala/roboshop-project-v1-shellscript-notes/blob/main/05-catalogue.sh.md) |
 | user, cart, shipping, payment, dispatch, frontend | | | | next |
 
 Support files: [mongo.repo](mongo.repo) · [rabbitmq.repo](rabbitmq.repo) · [catalogue.service](catalogue.service)
@@ -97,7 +97,7 @@ bash 01-mongodb.sh          # 02-redis.sh on redis, 03-mysql.sh on mysql, ...
 | Redis refused other servers | Change **both** `bind` and `protected-mode` |
 | Re-run ignored a changed service file | `restart`, not `start` |
 
-All problems and fixes: [troubleshooting](https://github.com/Abhignadumpala/roboshop-project-v1-shellscript/blob/main/docs/troubleshooting.md)
+All problems and fixes: [troubleshooting](https://github.com/Abhignadumpala/roboshop-project-v1-shellscript-notes/blob/main/docs/troubleshooting.md)
 
 ---
 
