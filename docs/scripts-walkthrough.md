@@ -430,18 +430,40 @@ fi
 | 7 | Service | `cp $script_dir/catalogue.service /etc/systemd/system/` → `sed` the domain |
 | 8 | Start | `systemctl daemon-reload` → `enable` → `start catalogue` |
 | 9 | Mongo client | `cp $script_dir/mongo.repo ...` → `dnf install mongodb-mongosh -y` |
-| 10 | Products | `mongosh --host mongodb.$domain_name </app/db/master-data.js` |
+| 10 | Products (only once) | `countDocuments()` → if `0`, `mongosh --host mongodb.$domain_name </app/db/master-data.js`, else SKIPPING |
+| 11 | Restart | `systemctl restart catalogue` → picks up every change from this run |
 
 **New tricks in this script**
 
 | Trick | Code | Why |
 |-------|------|-----|
-| Remember the script folder | `script_dir=$PWD` (at the top) | After `cd /app`, `cp catalogue.service` looks in `/app` → "No such file" |
+| Remember the script folder | `script_dir=$(dirname "$(realpath "$0")")` (at the top) | After `cd /app`, `cp catalogue.service` looks in `/app` → "No such file" |
 | Clean before unzip | `rm -rf /app/*` | On a re-run unzip asks "replace?"; output goes to the log, so the script **looks frozen** |
 | Skip existing user | `id roboshop` + `if` | `useradd` fails on a 2nd run |
 | Placeholder in the service file | `mongodb.DOMAIN_NAME` + `sed -i "s/DOMAIN_NAME/$domain_name/"` | Domain lives in **one** variable; DNS name, not IP |
 | `sed` the **copy**, not the repo file | `cp` first, then `sed` on `/etc/systemd/system/catalogue.service` | The repo file keeps `DOMAIN_NAME`, git stays clean, works again next run |
 | `daemon-reload` | before `start` | systemd reads the new unit file |
+| Load products only once | `product_count=$(mongosh ... --eval '...countDocuments()')` + `if [ "$product_count" -eq 0 ]` | A 2nd run would add all products again |
+| Restart at the end | `systemctl restart catalogue` + `validate` | `start` does nothing if it's already running; `restart` always loads the new config/code |
+
+**`$PWD` vs `realpath "$0"`**
+
+| | `$PWD` | `$(dirname "$(realpath "$0")")` |
+|---|---|---|
+| Gives | folder **I am in** when I run it | folder **the script lives in** |
+| `cd shell-roboshop-v1; sudo sh 05-catalogue.sh` | ✅ | ✅ |
+| `sudo sh shell-roboshop-v1/05-catalogue.sh` from `~` | ❌ `/home/ec2-user` | ✅ |
+
+```
+$0                       05-catalogue.sh
+realpath "$0"            /home/ec2-user/shell-roboshop-v1/05-catalogue.sh
+dirname  ...             /home/ec2-user/shell-roboshop-v1   → script_dir
+cd /app                  script_dir does not change
+cp "$script_dir/catalogue.service" ...   ✅ full path
+```
+
+- Run it at the **top**, before any `cd`: `realpath` joins the **current** folder + name.
+- Don't hard-code the path: my laptop and EC2 have different folders.
 
 **catalogue.service**
 
@@ -458,7 +480,24 @@ on server:    mongodb://mongodb.abhignadevops.store:27017/catalogue
 
 ![05-catalogue.sh run, health and products](images/handson/05-catalogue-run-health-products.png)
 
-> ⚠️ Not idempotent yet: the products load **only once**. A 2nd run adds them twice. Next: check `countDocuments()` before loading.
+**Idempotent product load:**
+```bash
+product_count=$(mongosh --host mongodb.$domain_name --quiet \
+  --eval 'db.getSiblingDB("catalogue").products.countDocuments()' 2>> $logs_file)
+validate $? "connecting to mongodb"
+
+if [ "$product_count" -eq 0 ]; then
+    mongosh --host mongodb.$domain_name </app/db/master-data.js &>> $logs_file
+    validate $? "loading catalogue products"
+else
+    echo -e "$(timestamp) [INFO] products are already loaded...${Y}SKIPPING${N}"
+fi
+
+systemctl restart catalogue &>> $logs_file
+validate $? "restarting catalogue"
+```
+
+> **Rule for every app script:** end with `systemctl restart <service>` + `validate $?`. `start` does nothing on a running service, so on a re-run new config or code would be ignored.
 
 ## sed quick recap
 
@@ -496,9 +535,10 @@ on server:    mongodb://mongodb.abhignadevops.store:27017/catalogue
 - **frontend → public IP + root domain**, everything else → **private IP + `<name>.domain`**.
 - **validate + `$?`** = stop at the first failed step with a clear SUCCESS / FAILED message.
 - **Logs** go to `/var/log/roboshop/<script>.log`, with timestamps and `[INFO]`/`[ERROR]` levels.
-- **Idempotent** scripts check before creating (`id roboshop`, `list_users | grep -qw`, `rm -rf /app/*`), so a re-run SKIPS instead of failing.
+- **Idempotent** scripts check before creating (`id roboshop`, `list_users | grep -qw`, `rm -rf /app/*`, `countDocuments()`), so a re-run SKIPS instead of failing.
+- **Always `systemctl restart <service>` + `validate`** at the end of an app script: `start` ignores changes if the service is already running.
 - **Validate the result, not only the exit code:** `mysql_secure_installation` said SUCCESS but left `root@localhost` without a password; a login check caught it.
-- **`script_dir=$PWD`** before any `cd`, so the script still finds its own files.
+- **`script_dir=$(dirname "$(realpath "$0")")`** before any `cd`, so the script finds its own files from any folder.
 - **Placeholders + sed** keep the domain in one variable; config files use **DNS names**, not IPs.
 
 ## Interview Questions

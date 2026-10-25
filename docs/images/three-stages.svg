@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="640" viewBox="0 0 1200 640" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#475569"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1200" height="640" rx="18" fill="#ffffff"/>
+
+  <text x="600" y="48" text-anchor="middle" font-size="28" font-weight="700" fill="#0f172a">RoboShop: Manual → Shell Scripts → Git + CI/CD</text>
+  <text x="600" y="78" text-anchor="middle" font-size="16" fill="#475569">Same project, built 3 ways. Each stage fixes the pain of the one before.</text>
+
+  <!-- Stage 1 -->
+  <rect x="40" y="110" width="340" height="440" rx="16" fill="#fff1f2" stroke="#e11d48" stroke-width="2"/>
+  <rect x="40" y="110" width="340" height="64" rx="16" fill="#e11d48"/>
+  <rect x="40" y="150" width="340" height="24" fill="#e11d48"/>
+  <circle cx="78" cy="142" r="20" fill="#ffffff"/>
+  <text x="78" y="149" text-anchor="middle" font-size="20" font-weight="700" fill="#e11d48">1</text>
+  <text x="110" y="150" font-size="22" font-weight="700" fill="#ffffff">Manual (done)</text>
+  <text x="62" y="212" font-size="16" fill="#0f172a">• 11 servers, 11 SGs, Route 53</text>
+  <text x="62" y="240" font-size="16" fill="#0f172a">• Typed every command by hand</text>
+  <text x="62" y="268" font-size="16" fill="#0f172a">• Real order placed end to end</text>
+  <text x="62" y="296" font-size="16" fill="#0f172a">• Debugged layer by layer</text>
+  <text x="62" y="336" font-size="15" font-weight="700" fill="#9f1239">Pain</text>
+  <text x="62" y="362" font-size="15" fill="#334155">typos, missed steps, slow,</text>
+  <text x="62" y="384" font-size="15" fill="#334155">hard to repeat the same way</text>
+  <rect x="62" y="470" width="296" height="56" rx="12" fill="#e11d48"/>
+  <text x="210" y="505" text-anchor="middle" font-size="20" font-weight="700" fill="#ffffff">⏱ 4 – 5 hours</text>
+
+  <!-- arrow 1 -->
+  <line x1="384" y1="330" x2="426" y2="330" stroke="#475569" stroke-width="3" marker-end="url(#arr)"/>
+
+  <!-- Stage 2 -->
+  <rect x="430" y="110" width="340" height="440" rx="16" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <rect x="430" y="110" width="340" height="64" rx="16" fill="#2563eb"/>
+  <rect x="430" y="150" width="340" height="24" fill="#2563eb"/>
+  <circle cx="468" cy="142" r="20" fill="#ffffff"/>
+  <text x="468" y="149" text-anchor="middle" font-size="20" font-weight="700" fill="#2563eb">2</text>
+  <text x="500" y="150" font-size="22" font-weight="700" fill="#ffffff">Shell scripts (now)</text>
+  <text x="452" y="212" font-size="16" fill="#0f172a">• roboshop.sh: EC2 + DNS via CLI</text>
+  <text x="452" y="240" font-size="16" fill="#0f172a">• One script per component</text>
+  <text x="452" y="268" font-size="16" fill="#0f172a">• validate $? → stop on failure</text>
+  <text x="452" y="296" font-size="16" fill="#0f172a">• Logs, idempotent re-runs</text>
+  <text x="452" y="336" font-size="15" font-weight="700" fill="#1e40af">Still missing</text>
+  <text x="452" y="362" font-size="15" fill="#334155">history, rollback, tests,</text>
+  <text x="452" y="384" font-size="15" fill="#334155">secrets, auto-trigger</text>
+  <rect x="452" y="470" width="296" height="56" rx="12" fill="#2563eb"/>
+  <text x="600" y="505" text-anchor="middle" font-size="20" font-weight="700" fill="#ffffff">⏱ about 2 hours</text>
+
+  <!-- arrow 2 -->
+  <line x1="774" y1="330" x2="816" y2="330" stroke="#475569" stroke-width="3" stroke-dasharray="6 5" marker-end="url(#arr)"/>
+
+  <!-- Stage 3 -->
+  <rect x="820" y="110" width="340" height="440" rx="16" fill="#f0fdf4" stroke="#16a34a" stroke-width="2" stroke-dasharray="8 6"/>
+  <rect x="820" y="110" width="340" height="64" rx="16" fill="#16a34a"/>
+  <rect x="820" y="150" width="340" height="24" fill="#16a34a"/>
+  <circle cx="858" cy="142" r="20" fill="#ffffff"/>
+  <text x="858" y="149" text-anchor="middle" font-size="20" font-weight="700" fill="#16a34a">3</text>
+  <text x="890" y="150" font-size="22" font-weight="700" fill="#ffffff">Git + CI/CD (next)</text>
+  <text x="842" y="212" font-size="16" fill="#0f172a">• Every change = a commit</text>
+  <text x="842" y="240" font-size="16" fill="#0f172a">• Who, what, when, why</text>
+  <text x="842" y="268" font-size="16" fill="#0f172a">• Roll back to a good version</text>
+  <text x="842" y="296" font-size="16" fill="#0f172a">• Pipeline: lint → test → deploy</text>
+  <text x="842" y="336" font-size="15" font-weight="700" fill="#166534">Goal</text>
+  <text x="842" y="362" font-size="15" fill="#334155">fast, secure, reliable,</text>
+  <text x="842" y="384" font-size="15" fill="#334155">no human typing on servers</text>
+  <rect x="842" y="470" width="296" height="56" rx="12" fill="#16a34a"/>
+  <text x="990" y="505" text-anchor="middle" font-size="20" font-weight="700" fill="#ffffff">⏱ push → deployed</text>
+
+  <!-- legend -->
+  <line x1="300" y1="598" x2="350" y2="598" stroke="#475569" stroke-width="3"/>
+  <text x="360" y="604" font-size="14" fill="#475569">done</text>
+  <line x1="430" y1="598" x2="480" y2="598" stroke="#475569" stroke-width="3" stroke-dasharray="6 5"/>
+  <text x="490" y="604" font-size="14" fill="#475569">next step</text>
+  <text x="620" y="604" font-size="14" fill="#475569">Times = my own runs of the full project</text>
+</svg>

@@ -15,7 +15,7 @@ if [ $user_id -ne 0 ]; then
 fi
 
 mkdir -p $logs_folder
-script_dir=$PWD    # NEW: remember the script folder before cd /app
+script_dir=$(dirname "$(realpath "$0")")    # folder where this script lives, saved before cd /app
 
 timestamp(){
     date +"%F %T"
@@ -70,11 +70,23 @@ systemctl start catalogue &>> $logs_file
 validate $? "starting and enabling catalogue"
 
 cp $script_dir/mongo.repo /etc/yum.repos.d/mongo.repo    # NEW: MongoDB client + load products
+validate $? "adding mongo repo"
+
 dnf install mongodb-mongosh -y &>> $logs_file
 validate $? "installing mongodb client"
 
-mongosh --host mongodb.$domain_name </app/db/master-data.js &>> $logs_file
-validate $? "loading catalogue products"
+product_count=$(mongosh --host mongodb.$domain_name --quiet --eval 'db.getSiblingDB("catalogue").products.countDocuments()' 2>> $logs_file)    # NEW: load products only once
+validate $? "connecting to mongodb"
+
+if [ "$product_count" -eq 0 ]; then
+    mongosh --host mongodb.$domain_name </app/db/master-data.js &>> $logs_file
+    validate $? "loading catalogue products"
+else
+    echo -e "$(timestamp) [INFO] products are already loaded...${Y}SKIPPING${N}" | tee -a $logs_file
+fi
+
+systemctl restart catalogue &>> $logs_file    # NEW: restart so catalogue picks up every change
+validate $? "restarting catalogue"
 
 echo "$(timestamp) [INFO] script completed in  $SECONDS seconds" | tee -a $logs_file
 echo "$(timestamp) [INFO] ==== Script completed execution ======" | tee -a $logs_file

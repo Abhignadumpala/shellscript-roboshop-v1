@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="ab" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker>
+    <marker id="ag" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/></marker>
+    <marker id="ao" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#ea580c"/></marker>
+    <marker id="ak" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#475569"/></marker>
+  </defs>
+  <rect x="0" y="0" width="1200" height="800" rx="18" fill="#ffffff"/>
+
+  <text x="600" y="44" text-anchor="middle" font-size="26" font-weight="700" fill="#0f172a">RoboShop: who calls whom (and on which port)</text>
+  <text x="600" y="72" text-anchor="middle" font-size="15" fill="#475569">Arrow = the caller has the address in its config. The target's SG must allow inbound from the caller.</text>
+
+  <!-- column bands -->
+  <rect x="455" y="95" width="250" height="610" rx="14" fill="#eff6ff"/>
+  <text x="580" y="114" text-anchor="middle" font-size="13" font-weight="700" fill="#1e40af">APP TIER</text>
+  <rect x="875" y="95" width="250" height="610" rx="14" fill="#f0fdf4"/>
+  <text x="1000" y="114" text-anchor="middle" font-size="13" font-weight="700" fill="#166534">DATABASE TIER</text>
+
+  <!-- internet + frontend -->
+  <rect x="30" y="330" width="130" height="70" rx="12" fill="#475569"/>
+  <text x="95" y="362" text-anchor="middle" font-size="17" font-weight="700" fill="#fff">Internet</text>
+  <text x="95" y="384" text-anchor="middle" font-size="13" fill="#e2e8f0">browser</text>
+  <line x1="160" y1="365" x2="196" y2="365" stroke="#475569" stroke-width="3" marker-end="url(#ak)"/>
+  <text x="178" y="352" text-anchor="middle" font-size="12" fill="#475569">:80</text>
+
+  <rect x="200" y="330" width="170" height="70" rx="12" fill="#7c3aed"/>
+  <text x="285" y="360" text-anchor="middle" font-size="18" font-weight="700" fill="#fff">frontend</text>
+  <text x="285" y="382" text-anchor="middle" font-size="13" fill="#ede9fe">nginx · :80</text>
+
+  <!-- frontend -> apps (blue) -->
+  <g stroke="#2563eb" stroke-width="2.5" fill="none" marker-end="url(#ab)">
+    <line x1="370" y1="358" x2="476" y2="157"/>
+    <line x1="370" y1="361" x2="476" y2="257"/>
+    <line x1="370" y1="365" x2="476" y2="357"/>
+    <line x1="370" y1="369" x2="476" y2="457"/>
+    <line x1="370" y1="372" x2="476" y2="557"/>
+  </g>
+
+  <!-- apps -->
+  <g font-weight="700" font-size="17" fill="#fff" text-anchor="middle">
+    <rect x="480" y="125" width="200" height="64" rx="12" fill="#2563eb"/>
+    <text x="580" y="152">catalogue</text>
+    <rect x="480" y="225" width="200" height="64" rx="12" fill="#2563eb"/>
+    <text x="580" y="252">user</text>
+    <rect x="480" y="325" width="200" height="64" rx="12" fill="#2563eb"/>
+    <text x="580" y="352">cart</text>
+    <rect x="480" y="425" width="200" height="64" rx="12" fill="#2563eb"/>
+    <text x="580" y="452">shipping</text>
+    <rect x="480" y="525" width="200" height="64" rx="12" fill="#2563eb"/>
+    <text x="580" y="552">payment</text>
+    <rect x="480" y="625" width="200" height="64" rx="12" fill="#64748b"/>
+    <text x="580" y="652">dispatch</text>
+  </g>
+  <g font-size="13" fill="#dbeafe" text-anchor="middle">
+    <text x="580" y="174">Node.js · :8080</text>
+    <text x="580" y="274">Node.js · :8080</text>
+    <text x="580" y="374">Node.js · :8080</text>
+    <text x="580" y="474">Java · :8080</text>
+    <text x="580" y="574">Python · :8080</text>
+    <text x="580" y="674" fill="#e2e8f0">Go · no port (only calls out)</text>
+  </g>
+
+  <!-- app -> app (orange) on the right edge of the app column -->
+  <g stroke="#ea580c" stroke-width="2.5" fill="none" stroke-dasharray="7 4" marker-end="url(#ao)">
+    <path d="M680,340 C730,340 730,176 684,176"/>
+    <path d="M680,440 C722,440 722,380 684,380"/>
+    <path d="M680,540 C752,540 752,370 684,370"/>
+    <path d="M680,546 C800,546 800,276 684,276"/>
+  </g>
+
+  <!-- databases -->
+  <g font-weight="700" font-size="17" fill="#fff" text-anchor="middle">
+    <rect x="900" y="170" width="200" height="64" rx="12" fill="#16a34a"/>
+    <text x="1000" y="197">mongodb</text>
+    <rect x="900" y="300" width="200" height="64" rx="12" fill="#dc2626"/>
+    <text x="1000" y="327">redis</text>
+    <rect x="900" y="440" width="200" height="64" rx="12" fill="#0891b2"/>
+    <text x="1000" y="467">mysql</text>
+    <rect x="900" y="590" width="200" height="64" rx="12" fill="#d97706"/>
+    <text x="1000" y="617">rabbitmq</text>
+  </g>
+  <g font-size="13" fill="#ffffff" text-anchor="middle">
+    <text x="1000" y="219">:27017</text>
+    <text x="1000" y="349">:6379</text>
+    <text x="1000" y="489">:3306</text>
+    <text x="1000" y="639">:5672</text>
+  </g>
+
+  <!-- app -> db (green) -->
+  <g stroke="#16a34a" stroke-width="2.5" fill="none" marker-end="url(#ag)">
+    <line x1="680" y1="152" x2="896" y2="196"/>
+    <line x1="680" y1="250" x2="896" y2="208"/>
+    <line x1="680" y1="258" x2="896" y2="326"/>
+    <line x1="680" y1="356" x2="896" y2="338"/>
+    <line x1="680" y1="458" x2="896" y2="472"/>
+    <line x1="680" y1="558" x2="896" y2="616"/>
+    <line x1="680" y1="656" x2="896" y2="628"/>
+  </g>
+
+  <!-- legend -->
+  <rect x="30" y="720" width="1140" height="62" rx="12" fill="#f8fafc" stroke="#e2e8f0"/>
+  <line x1="55" y1="751" x2="105" y2="751" stroke="#2563eb" stroke-width="3" marker-end="url(#ab)"/>
+  <text x="115" y="756" font-size="14" fill="#0f172a">frontend → app (nginx proxy_pass)</text>
+  <line x1="390" y1="751" x2="440" y2="751" stroke="#ea580c" stroke-width="3" stroke-dasharray="7 4" marker-end="url(#ao)"/>
+  <text x="450" y="756" font-size="14" fill="#0f172a">app → app (Environment= in .service)</text>
+  <line x1="745" y1="751" x2="795" y2="751" stroke="#16a34a" stroke-width="3" marker-end="url(#ag)"/>
+  <text x="805" y="756" font-size="14" fill="#0f172a">app → database (Environment= in .service)</text>
+</svg>

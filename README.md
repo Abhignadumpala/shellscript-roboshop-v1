@@ -70,6 +70,8 @@ shellscript-roboshop-v1/
     ├── troubleshooting.md       # problems I hit + fixes
     ├── debugging-guide.md       # which error → what to check, logs per server, real errors
     ├── interview-questions.md
+    ├── roboshop-journey.md      # manual → shell scripts → Git + CI/CD, every error as one story
+    ├── traffic-flow-incoming-outgoing.md   # who calls whom: address files, SG rules, config changes
     └── images/
 ```
 
@@ -251,8 +253,9 @@ echo "$(timestamp) [INFO] script completed in $SECONDS seconds" | tee -a $logs_f
 | **Validation** | `validate $? "<step>"` after each step | Stop at the first failure with a clear message |
 | **Logging** | `&>> $logs_file`, `tee -a`, `[INFO]`/`[ERROR]`, timestamps | Screen stays clean; full output kept for debugging; `grep ERROR` works |
 | **Timing** | `$SECONDS` | Measured run time per script |
-| **Idempotency** | `id roboshop` / `rabbitmqctl list_users \| grep -qw roboshop` → create or **SKIPPING**; `rm -rf /app/*` before unzip | Safe to run again |
-| **Own files after `cd`** | `script_dir=$PWD` at the top, `cp $script_dir/catalogue.service ...` | `cd /app` would make relative paths fail |
+| **Idempotency** | `id roboshop` / `rabbitmqctl list_users \| grep -qw roboshop` → create or **SKIPPING**; `rm -rf /app/*` before unzip; `countDocuments()` → load products only if `0` | Same result no matter how many times I run it |
+| **Own files after `cd`** | `script_dir=$(dirname "$(realpath "$0")")` at the top, `cp $script_dir/catalogue.service ...` | `cd /app` would make relative paths fail; works from any folder |
+| **Restart at the end** | `systemctl restart <service>` + `validate $?` | `start` ignores changes if the service is already running |
 | **Placeholders** | `mongodb.DOMAIN_NAME` in the unit file + `sed -i "s/DOMAIN_NAME/$domain_name/"` on the **copy** | Domain set in one variable; repo file stays unchanged |
 | **Validate the result** | `mysql -uroot -p... -e "SELECT VERSION();"` after setting the password | An exit code of 0 doesn't prove the password works (see bug below) |
 
@@ -282,13 +285,15 @@ Full line-by-line explanation: [docs/scripts-walkthrough.md](docs/scripts-walkth
 | `ERROR 1045 Access denied for 'root'@'localhost'` although the script said SUCCESS | `mysql_secure_installation --set-root-pass` set the password only on `root@'%'`; `root@localhost` stayed **empty** (proved via `mysql.user`) | `ALTER USER 'root'@'localhost' ...` + a **login-check** step in the script |
 | Re-running `04-rabbitmq.sh` failed at `add_user` | User already exists → non-zero exit → validate stops | Check first with `grep -qw`, else **SKIPPING** (tested: 2nd run passes) |
 | Re-running `05-catalogue.sh` looked frozen | `unzip` asked "replace?" with output hidden in the log | `rm -rf /app/*` before unzip |
-| `cp catalogue.service` → No such file | Ran after `cd /app` | `script_dir=$PWD` at the top |
+| `cp catalogue.service` → No such file | Ran after `cd /app` | `script_dir=$(dirname "$(realpath "$0")")` at the top |
+| 2nd run would load products twice | `master-data.js` ran every time | `countDocuments()` → load only if `0`, else **SKIPPING** |
+| Re-run ignored a changed service file | `systemctl start` does nothing on a running service | End with `systemctl restart catalogue` + `validate` |
 | `sed: unterminated 's' command` | Missing the 3rd `/` | `"s/DOMAIN_NAME/$domain_name/"` |
 | Route 53 got the literal text `$IP` | Variables don't expand inside single quotes | `'"Value": "'$IP'"'` |
 | `script completed in  seconds` | `$seconds` instead of the built-in `$SECONDS` | Bash is case-sensitive |
 | Old AMI / SG IDs from class not found | IDs belong to another account or were deregistered | Use my own AMI ID and SG **names** |
 
-All 15 with details: [docs/troubleshooting.md](docs/troubleshooting.md)
+All 17 with details: [docs/troubleshooting.md](docs/troubleshooting.md)
 
 ---
 
@@ -335,7 +340,6 @@ Full guide: [docs/debugging-guide.md](docs/debugging-guide.md)
 ## What's next
 
 - [ ] `06-user.sh`, `07-cart.sh`, `08-shipping.sh`, `09-payment.sh`, `10-frontend.sh`
-- [ ] Make the catalogue product load idempotent (check `countDocuments()` before loading)
 - [ ] Move the shared header and functions into `common.sh`
 - [ ] Practice debugging by breaking things on purpose (SG rule, stopped service, wrong DNS name)
 
@@ -349,5 +353,7 @@ Full guide: [docs/debugging-guide.md](docs/debugging-guide.md)
 | [Troubleshooting](docs/troubleshooting.md) | Problems I hit, causes, fixes |
 | [Debugging guide](docs/debugging-guide.md) | Which error → what to check, logs per server, real class errors |
 | [Interview questions](docs/interview-questions.md) | Short Q&A for revision |
+| [RoboShop journey](docs/roboshop-journey.md) | Manual → shell scripts → Git + CI/CD: every error, fix and lesson as one story |
+| [Traffic flow: incoming & outgoing](docs/traffic-flow-incoming-outgoing.md) | Who calls whom: which address goes in which file, SG rules, config changes, side by side per server |
 
 Learning notes (day by day): [devops-notes](https://github.com/Abhignadumpala/devops-notes)
