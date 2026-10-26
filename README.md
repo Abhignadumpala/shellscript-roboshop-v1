@@ -47,7 +47,7 @@
 | [05-catalogue.sh](05-catalogue.sh) | catalogue | Node.js app, systemd service, products loaded once | 63 s | [📖](https://github.com/Abhignadumpala/roboshop-project-v1-shellscript-notes/blob/main/05-catalogue.sh.md) |
 | [06-user.sh](06-user.sh) | user | Node.js app, sessions in Redis, users in MongoDB | 109 s | [📖](https://github.com/Abhignadumpala/roboshop-project-v1-shellscript-notes/blob/main/06-user.sh.md) |
 | [07-cart.sh](07-cart.sh) | cart | Node.js app, cart in Redis, prices from catalogue | 99 s | [📖](https://github.com/Abhignadumpala/roboshop-project-v1-shellscript-notes/blob/main/07-cart.sh.md) |
-| [08-shipping.sh](08-shipping.sh) | shipping | Java + Maven build, cities loaded into MySQL once | ⏳ | [📖](https://github.com/Abhignadumpala/roboshop-project-v1-shellscript-notes/blob/main/08-shipping.sh.md) |
+| [08-shipping.sh](08-shipping.sh) | shipping | Java + Maven build, cities loaded into MySQL once | 216 s | [📖](https://github.com/Abhignadumpala/roboshop-project-v1-shellscript-notes/blob/main/08-shipping.sh.md) |
 | payment, dispatch, frontend | | | | next |
 
 Support files: [mongo.repo](mongo.repo) · [rabbitmq.repo](rabbitmq.repo) · [catalogue.service](catalogue.service) · [user.service](user.service) · [cart.service](cart.service) · [shipping.service](shipping.service)
