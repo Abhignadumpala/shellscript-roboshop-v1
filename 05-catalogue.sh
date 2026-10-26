@@ -4,6 +4,7 @@ user_id=$(id -u)
 logs_folder="/var/log/roboshop"
 logs_file="${logs_folder}/${0}.log"
 domain_name="abhignadevops.store"
+scripts_dir=$(dirname "$(realpath "$0")")
 R="\e[31m"
 G="\e[32m"
 Y="\e[33m"
@@ -15,7 +16,6 @@ if [ $user_id -ne 0 ]; then
 fi
 
 mkdir -p $logs_folder
-script_dir=$(dirname "$(realpath "$0")")    # folder where this script lives, saved before cd /app
 
 timestamp(){
     date +"%F %T"
@@ -58,7 +58,7 @@ validate $? "unzipping catalogue"
 npm install &>> $logs_file
 validate $? "installing dependencies"
 
-cp $script_dir/catalogue.service /etc/systemd/system/catalogue.service    # FIXED: copy first, full path
+cp $scripts_dir/catalogue.service /etc/systemd/system/catalogue.service    # FIXED: copy first, full path
 validate $? "copying catalogue service"
 
 sed -i "s/DOMAIN_NAME/$domain_name/" /etc/systemd/system/catalogue.service    # FIXED: closing / and ed
@@ -69,7 +69,7 @@ systemctl enable catalogue &>> $logs_file
 systemctl start catalogue &>> $logs_file
 validate $? "starting and enabling catalogue"
 
-cp $script_dir/mongo.repo /etc/yum.repos.d/mongo.repo    # NEW: MongoDB client + load products
+cp $scripts_dir/mongo.repo /etc/yum.repos.d/mongo.repo    # NEW: MongoDB client + load products
 validate $? "adding mongo repo"
 
 dnf install mongodb-mongosh -y &>> $logs_file
