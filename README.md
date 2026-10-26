@@ -50,9 +50,13 @@
 | [06-user.sh](06-user.sh) | user | Node.js app, sessions in Redis, users in MongoDB | 109 s | [📖](https://github.com/Abhignadumpala/roboshop-project-v1-shellscript-notes/tree/main/06-user) |
 | [07-cart.sh](07-cart.sh) | cart | Node.js app, cart in Redis, prices from catalogue | 99 s | [📖](https://github.com/Abhignadumpala/roboshop-project-v1-shellscript-notes/tree/main/07-cart) |
 | [08-shipping.sh](08-shipping.sh) | shipping | Java + Maven build, cities loaded into MySQL once | 216 s | [📖](https://github.com/Abhignadumpala/roboshop-project-v1-shellscript-notes/tree/main/08-shipping) |
-| payment, dispatch, frontend | | | | next |
+| [09-payment.sh](09-payment.sh) | payment | Python 3.14 + venv + gunicorn, orders to RabbitMQ | 18 s | [📖](https://github.com/Abhignadumpala/roboshop-project-v1-shellscript-notes/tree/main/09-payment) |
+| [10-frontend.sh](10-frontend.sh) | frontend | Nginx 1.26 reverse proxy for `/api/*`, `nginx -t` before restart | – | [📖](https://github.com/Abhignadumpala/roboshop-project-v1-shellscript-notes/tree/main/10-frontend) |
+| dispatch | | | | next |
 
-Support files: [mongo.repo](mongo.repo) · [rabbitmq.repo](rabbitmq.repo) · [catalogue.service](catalogue.service) · [user.service](user.service) · [cart.service](cart.service) · [shipping.service](shipping.service)
+**Result:** shop live at `http://abhignadevops.store`, all 5 `/api/<service>/health` = 200 from the internet, **3 orders placed end to end**.
+
+Support files: [mongo.repo](mongo.repo) · [rabbitmq.repo](rabbitmq.repo) · [catalogue.service](catalogue.service) · [user.service](user.service) · [cart.service](cart.service) · [shipping.service](shipping.service) · [payment.service](payment.service) · [roboshop.conf](roboshop.conf) (nginx)
 
 ---
 
@@ -63,7 +67,7 @@ Support files: [mongo.repo](mongo.repo) · [rabbitmq.repo](rabbitmq.repo) · [ca
 ```bash
 git clone https://github.com/Abhignadumpala/shellscript-roboshop-v1.git
 cd shellscript-roboshop-v1
-bash roboshop.sh mongodb redis mysql rabbitmq catalogue user cart shipping
+bash roboshop.sh mongodb redis mysql rabbitmq catalogue user cart shipping payment dispatch frontend
 ```
 
 **2. Each server: install the component** (databases first, then apps)
@@ -74,7 +78,7 @@ sudo su -
 dnf install git -y
 git clone https://github.com/Abhignadumpala/shellscript-roboshop-v1.git
 cd shellscript-roboshop-v1
-bash 01-mongodb.sh          # 02-redis.sh on redis, 03-mysql.sh on mysql, ... 08-shipping.sh on shipping
+bash 01-mongodb.sh          # 02-redis.sh on redis, ... 09-payment.sh on payment, 10-frontend.sh on frontend (last)
 ```
 
 **Watch a long step:** `tail -f /var/log/roboshop/<script>.sh.log` in a 2nd SSH session.
@@ -91,7 +95,8 @@ bash 01-mongodb.sh          # 02-redis.sh on redis, 03-mysql.sh on mysql, ... 08
 | **DNS, not IPs** | `DOMAIN_NAME` placeholder in each `.service` file, `sed` on the **installed copy** (repo stays clean for `git pull`); Route 53 private records for every backend |
 | **Own files after `cd /app`** | `scripts_dir=$(dirname "$(realpath "$0")")` at the top → `cp $scripts_dir/<app>.service ...` |
 | **Restart at the end** | `systemctl restart` + `validate`, so every change is loaded |
-| **Validate the result** | e.g. MySQL login check after setting the password |
+| **Validate the result** | e.g. MySQL login check after setting the password; `nginx -t` before restarting nginx |
+| **Isolated Python libs** | Payment gets its own venv (`/app/.venv`), system Python untouched |
 
 ---
 
@@ -106,6 +111,9 @@ bash 01-mongodb.sh          # 02-redis.sh on redis, 03-mysql.sh on mysql, ... 08
 | Shipping data: the count query **fails** on the 1st run (no database yet) | No `validate` after the count; load if the result is empty or `0` |
 | Redis refused other servers | Change **both** `bind` and `protected-mode` |
 | Re-run ignored a changed service file | `restart`, not `start` |
+| Payment needs Python ≥ 3.10, RHEL 9 ships 3.9 | `python3.14` next to it + a venv |
+| Payment `/health` → `rabbitmq:false` once, then `true` | Idle connection had dropped; the check reconnects. Check twice before debugging |
+| Renamed a script, old file stayed on GitHub | `git rm` the old name; use `git mv` next time |
 
 All problems and fixes: [troubleshooting](https://github.com/Abhignadumpala/roboshop-project-v1-shellscript-notes/blob/main/docs/troubleshooting.md)
 
@@ -114,6 +122,7 @@ All problems and fixes: [troubleshooting](https://github.com/Abhignadumpala/robo
 ## What's next
 
 - [x] `06-user.sh`, `07-cart.sh`, `08-shipping.sh`
-- [ ] `09-payment.sh`, `10-dispatch.sh`, `11-frontend.sh`
+- [x] `09-payment.sh`, `10-frontend.sh`: 3 orders placed end to end
+- [ ] `11-dispatch.sh`
 - [ ] Shared functions in `common.sh`
 - [ ] Move to **Git + CI/CD**: tests and automatic deploys on every push
