@@ -8,6 +8,8 @@
 
 ![Who calls whom: every RoboShop server, its port and who it connects to](images/who-calls-whom.svg)
 
+![App servers 06–08: the connections I checked](images/06-08-app-connections-verified.png)
+
 ---
 
 ## What this project does
