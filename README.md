@@ -63,7 +63,7 @@ Support files: [mongo.repo](mongo.repo) · [rabbitmq.repo](rabbitmq.repo) · [ca
 ```bash
 git clone https://github.com/Abhignadumpala/shellscript-roboshop-v1.git
 cd shellscript-roboshop-v1
-bash roboshop.sh mongodb redis mysql rabbitmq catalogue
+bash roboshop.sh mongodb redis mysql rabbitmq catalogue user cart shipping
 ```
 
 **2. Each server: install the component** (databases first, then apps)
@@ -74,7 +74,7 @@ sudo su -
 dnf install git -y
 git clone https://github.com/Abhignadumpala/shellscript-roboshop-v1.git
 cd shellscript-roboshop-v1
-bash 01-mongodb.sh          # 02-redis.sh on redis, 03-mysql.sh on mysql, ...
+bash 01-mongodb.sh          # 02-redis.sh on redis, 03-mysql.sh on mysql, ... 08-shipping.sh on shipping
 ```
 
 **Watch a long step:** `tail -f /var/log/roboshop/<script>.sh.log` in a 2nd SSH session.
@@ -87,8 +87,9 @@ bash 01-mongodb.sh          # 02-redis.sh on redis, 03-mysql.sh on mysql, ...
 |---------|-----|
 | **Validation** | `validate $? "<step>"` after each step → SUCCESS, or FAILED and stop |
 | **Logging** | Timestamped `[INFO]` / `[ERROR]` lines in `/var/log/roboshop/<script>.log` |
-| **Idempotency** | Check before creating (`id roboshop`, `list_users \| grep -qw`, `countDocuments()`) → SKIPPING on re-run |
-| **DNS, not IPs** | `DOMAIN_NAME` placeholder + `sed`; Route 53 private records for every backend |
+| **Idempotency** | Check before creating (`id roboshop`, `list_users \| grep -qw`, `countDocuments()`, `SELECT COUNT(*)`) → SKIPPING on re-run |
+| **DNS, not IPs** | `DOMAIN_NAME` placeholder in each `.service` file, `sed` on the **installed copy** (repo stays clean for `git pull`); Route 53 private records for every backend |
+| **Own files after `cd /app`** | `scripts_dir=$(dirname "$(realpath "$0")")` at the top → `cp $scripts_dir/<app>.service ...` |
 | **Restart at the end** | `systemctl restart` + `validate`, so every change is loaded |
 | **Validate the result** | e.g. MySQL login check after setting the password |
 
@@ -100,7 +101,9 @@ bash 01-mongodb.sh          # 02-redis.sh on redis, 03-mysql.sh on mysql, ...
 |---------|-----|
 | MySQL said SUCCESS but `root@localhost` had **no password** | `ALTER USER` + a login-check step |
 | Re-runs failed ("user already exists") or loaded data twice | Check first → SKIPPING |
-| `cp catalogue.service` failed after `cd /app` | `script_dir=$(dirname "$(realpath "$0")")` at the top |
+| `cp catalogue.service` failed after `cd /app` | `scripts_dir=$(dirname "$(realpath "$0")")` at the top |
+| A typo in a variable name (`script_dir` vs `scripts_dir`) → empty path, no error | Same name everywhere; `grep -n` after every rename (`bash -n` can't catch it) |
+| Shipping data: the count query **fails** on the 1st run (no database yet) | No `validate` after the count; load if the result is empty or `0` |
 | Redis refused other servers | Change **both** `bind` and `protected-mode` |
 | Re-run ignored a changed service file | `restart`, not `start` |
 
@@ -110,6 +113,7 @@ All problems and fixes: [troubleshooting](https://github.com/Abhignadumpala/robo
 
 ## What's next
 
-- [ ] `06-user.sh` … `11-frontend.sh`
+- [x] `06-user.sh`, `07-cart.sh`, `08-shipping.sh`
+- [ ] `09-payment.sh`, `10-dispatch.sh`, `11-frontend.sh`
 - [ ] Shared functions in `common.sh`
 - [ ] Move to **Git + CI/CD**: tests and automatic deploys on every push
