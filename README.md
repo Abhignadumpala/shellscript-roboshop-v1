@@ -45,9 +45,11 @@
 | [03-mysql.sh](03-mysql.sh) | mysql | MySQL 8.4, root password + login check | 40 s | [📖](https://github.com/Abhignadumpala/roboshop-project-v1-shellscript-notes/blob/main/03-mysql.sh.md) |
 | [04-rabbitmq.sh](04-rabbitmq.sh) | rabbitmq | RabbitMQ + app user (re-run safe) | 36 s | [📖](https://github.com/Abhignadumpala/roboshop-project-v1-shellscript-notes/blob/main/04-rabbitmq.sh.md) |
 | [05-catalogue.sh](05-catalogue.sh) | catalogue | Node.js app, systemd service, products loaded once | 63 s | [📖](https://github.com/Abhignadumpala/roboshop-project-v1-shellscript-notes/blob/main/05-catalogue.sh.md) |
-| user, cart, shipping, payment, dispatch, frontend | | | | next |
+| [06-user.sh](06-user.sh) | user | Node.js app, sessions in Redis, users in MongoDB | 109 s | [📖](https://github.com/Abhignadumpala/roboshop-project-v1-shellscript-notes/blob/main/06-user.sh.md) |
+| [07-cart.sh](07-cart.sh) | cart | Node.js app, cart in Redis, prices from catalogue | 99 s | [📖](https://github.com/Abhignadumpala/roboshop-project-v1-shellscript-notes/blob/main/07-cart.sh.md) |
+| shipping, payment, dispatch, frontend | | | | next |
 
-Support files: [mongo.repo](mongo.repo) · [rabbitmq.repo](rabbitmq.repo) · [catalogue.service](catalogue.service)
+Support files: [mongo.repo](mongo.repo) · [rabbitmq.repo](rabbitmq.repo) · [catalogue.service](catalogue.service) · [user.service](user.service) · [cart.service](cart.service)
 
 ---
 
