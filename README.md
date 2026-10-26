@@ -41,15 +41,15 @@
 
 | Script | Runs on | What it does | Run time | Explained |
 |--------|---------|--------------|----------|-----------|
-| [roboshop.sh](roboshop.sh) | laptop | Creates EC2 instances + Route 53 records | – | [📖](https://github.com/Abhignadumpala/roboshop-project-v1-shellscript-notes/blob/main/roboshop.sh.md) |
-| [01-mongodb.sh](01-mongodb.sh) | mongodb | MongoDB 7.0, open to other servers | – | [📖](https://github.com/Abhignadumpala/roboshop-project-v1-shellscript-notes/blob/main/01-mongodb.sh.md) |
-| [02-redis.sh](02-redis.sh) | redis | Redis 7, `bind` + `protected-mode` | 21 s | [📖](https://github.com/Abhignadumpala/roboshop-project-v1-shellscript-notes/blob/main/02-redis.sh.md) |
-| [03-mysql.sh](03-mysql.sh) | mysql | MySQL 8.4, root password + login check | 40 s | [📖](https://github.com/Abhignadumpala/roboshop-project-v1-shellscript-notes/blob/main/03-mysql.sh.md) |
-| [04-rabbitmq.sh](04-rabbitmq.sh) | rabbitmq | RabbitMQ + app user (re-run safe) | 36 s | [📖](https://github.com/Abhignadumpala/roboshop-project-v1-shellscript-notes/blob/main/04-rabbitmq.sh.md) |
-| [05-catalogue.sh](05-catalogue.sh) | catalogue | Node.js app, systemd service, products loaded once | 63 s | [📖](https://github.com/Abhignadumpala/roboshop-project-v1-shellscript-notes/blob/main/05-catalogue.sh.md) |
-| [06-user.sh](06-user.sh) | user | Node.js app, sessions in Redis, users in MongoDB | 109 s | [📖](https://github.com/Abhignadumpala/roboshop-project-v1-shellscript-notes/blob/main/06-user.sh.md) |
-| [07-cart.sh](07-cart.sh) | cart | Node.js app, cart in Redis, prices from catalogue | 99 s | [📖](https://github.com/Abhignadumpala/roboshop-project-v1-shellscript-notes/blob/main/07-cart.sh.md) |
-| [08-shipping.sh](08-shipping.sh) | shipping | Java + Maven build, cities loaded into MySQL once | 216 s | [📖](https://github.com/Abhignadumpala/roboshop-project-v1-shellscript-notes/blob/main/08-shipping.sh.md) |
+| [roboshop.sh](roboshop.sh) | laptop | Creates EC2 instances + Route 53 records | – | [📖](https://github.com/Abhignadumpala/roboshop-project-v1-shellscript-notes/tree/main/00-roboshop) |
+| [01-mongodb.sh](01-mongodb.sh) | mongodb | MongoDB 7.0, open to other servers | – | [📖](https://github.com/Abhignadumpala/roboshop-project-v1-shellscript-notes/tree/main/01-mongodb) |
+| [02-redis.sh](02-redis.sh) | redis | Redis 7, `bind` + `protected-mode` | 21 s | [📖](https://github.com/Abhignadumpala/roboshop-project-v1-shellscript-notes/tree/main/02-redis) |
+| [03-mysql.sh](03-mysql.sh) | mysql | MySQL 8.4, root password + login check | 40 s | [📖](https://github.com/Abhignadumpala/roboshop-project-v1-shellscript-notes/tree/main/03-mysql) |
+| [04-rabbitmq.sh](04-rabbitmq.sh) | rabbitmq | RabbitMQ + app user (re-run safe) | 36 s | [📖](https://github.com/Abhignadumpala/roboshop-project-v1-shellscript-notes/tree/main/04-rabbitmq) |
+| [05-catalogue.sh](05-catalogue.sh) | catalogue | Node.js app, systemd service, products loaded once | 63 s | [📖](https://github.com/Abhignadumpala/roboshop-project-v1-shellscript-notes/tree/main/05-catalogue) |
+| [06-user.sh](06-user.sh) | user | Node.js app, sessions in Redis, users in MongoDB | 109 s | [📖](https://github.com/Abhignadumpala/roboshop-project-v1-shellscript-notes/tree/main/06-user) |
+| [07-cart.sh](07-cart.sh) | cart | Node.js app, cart in Redis, prices from catalogue | 99 s | [📖](https://github.com/Abhignadumpala/roboshop-project-v1-shellscript-notes/tree/main/07-cart) |
+| [08-shipping.sh](08-shipping.sh) | shipping | Java + Maven build, cities loaded into MySQL once | 216 s | [📖](https://github.com/Abhignadumpala/roboshop-project-v1-shellscript-notes/tree/main/08-shipping) |
 | payment, dispatch, frontend | | | | next |
 
 Support files: [mongo.repo](mongo.repo) · [rabbitmq.repo](rabbitmq.repo) · [catalogue.service](catalogue.service) · [user.service](user.service) · [cart.service](cart.service) · [shipping.service](shipping.service)
