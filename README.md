@@ -60,28 +60,134 @@ Support files: [mongo.repo](mongo.repo) · [rabbitmq.repo](rabbitmq.repo) · [ca
 
 ---
 
-## How to run
+## Do the lab yourself (step by step)
 
-**1. Laptop: create servers + DNS**
-
-```bash
-git clone https://github.com/Abhignadumpala/shellscript-roboshop-v1.git
-cd shellscript-roboshop-v1
-bash roboshop.sh mongodb redis mysql rabbitmq catalogue user cart shipping payment dispatch frontend
+```
+                  ┌──────────► catalogue ──► mongodb
+browser ──► frontend (Nginx) ─► user ──────► mongodb, redis
+                  ├──────────► cart ───────► redis
+                  ├──────────► shipping ───► mysql
+                  └──────────► payment ────► rabbitmq
 ```
 
-**2. Each server: install the component** (databases first, then apps)
+### Step 0: What you need
 
+| Need | Why |
+|---|---|
+| AWS account + **AWS CLI** configured on your laptop (`aws configure`) | `roboshop.sh` creates servers from the laptop |
+| A **domain** with a **Route 53 hosted zone** | every server gets a name like `mongodb.<your-domain>` |
+| A **RHEL 9** AMI | all scripts use `dnf` + systemd |
+| Git on the laptop | clone / fork this repo |
+
+`roboshop.sh` doesn't attach a key pair (I used a practice AMI with password login). With a normal RHEL AMI, add `--key-name <your-key>` to `aws ec2 run-instances` and SSH with `-i <your-key>.pem`.
+
+### Step 1: Fork and set your values
+
+Fork this repo, clone it to your laptop, and change these values to yours:
+
+| File | Variable | Set to |
+|---|---|---|
+| `roboshop.sh` | `ami_id` | your RHEL 9 AMI ID |
+| `roboshop.sh` | `hosted_zone_id` | your Route 53 hosted zone ID |
+| `roboshop.sh` | `domain_name` | your domain |
+| `05-catalogue.sh` … `10-frontend.sh` (6 scripts) | `domain_name` | your domain |
+
+In v1 every script has its own copy of `domain_name` (that's why v2 moved it into `common.sh`). The `.service` files and `roboshop.conf` use `DOMAIN_NAME`; the scripts replace it on the server, so you don't edit those.
+
+Push your changes (servers clone from **your** fork):
+```bash
+git add .
+git commit -m "Set my AMI, hosted zone and domain"
+git push
+```
+
+### Step 2: Create the security groups (once)
+
+`roboshop.sh` attaches 2 SGs to each server: `roboshop-common` + `roboshop-<component>`. Create these in the default VPC:
+
+| Security group | Inbound port | Allowed from |
+|---|---|---|
+| `roboshop-common` | 22 (SSH) | your IP |
+| `roboshop-frontend` | 80 | `0.0.0.0/0` (everyone) |
+| `roboshop-catalogue` | 8080 | frontend, cart |
+| `roboshop-user` | 8080 | frontend, payment |
+| `roboshop-cart` | 8080 | frontend, shipping, payment |
+| `roboshop-shipping` | 8080 | frontend |
+| `roboshop-payment` | 8080 | frontend |
+| `roboshop-mongodb` | 27017 | catalogue, user |
+| `roboshop-redis` | 6379 | user, cart |
+| `roboshop-mysql` | 3306 | shipping |
+| `roboshop-rabbitmq` | 5672 | payment |
+
+"Allowed from frontend" = source is the SG `roboshop-frontend`, not an IP, so the rule still works when servers get new IPs.
+
+### Step 3: Create the servers (laptop)
+
+```bash
+bash roboshop.sh mongodb redis mysql rabbitmq catalogue user cart shipping payment frontend
+```
+
+For each name it creates the EC2 server `roboshop-<name>` and a DNS record:
+
+| Server | DNS record | IP used |
+|---|---|---|
+| frontend | `<your-domain>` | **public** (for the browser) |
+| all others | `<name>.<your-domain>` | **private** (server to server) |
+
+### Step 4: Install each component (on each server)
+
+SSH into each server, clone **your** fork and run that server's script:
 ```bash
 ssh ec2-user@<public-ip>
 sudo su -
-dnf install git -y
-git clone https://github.com/Abhignadumpala/shellscript-roboshop-v1.git
+dnf install git -y            # skip if git is already there
+git clone https://github.com/<your-username>/shellscript-roboshop-v1.git
 cd shellscript-roboshop-v1
-bash 01-mongodb.sh          # 02-redis.sh on redis, ... 09-payment.sh on payment, 10-frontend.sh on frontend (last)
+bash 01-mongodb.sh            # the script for this server (table below)
 ```
 
-**Watch a long step:** `tail -f /var/log/roboshop/<script>.sh.log` in a 2nd SSH session.
+Order matters: **databases first, then apps, frontend last.**
+
+| Order | Server | Run |
+|---|---|---|
+| 1 | roboshop-mongodb | `bash 01-mongodb.sh` |
+| 2 | roboshop-redis | `bash 02-redis.sh` |
+| 3 | roboshop-mysql | `bash 03-mysql.sh` |
+| 4 | roboshop-rabbitmq | `bash 04-rabbitmq.sh` |
+| 5 | roboshop-catalogue | `bash 05-catalogue.sh` |
+| 6 | roboshop-user | `bash 06-user.sh` |
+| 7 | roboshop-cart | `bash 07-cart.sh` |
+| 8 | roboshop-shipping | `bash 08-shipping.sh` |
+| 9 | roboshop-payment | `bash 09-payment.sh` |
+| 10 | roboshop-frontend | `bash 10-frontend.sh` |
+
+Each step prints **SUCCESS** or **FAILED**. On FAILED the script stops; read `/var/log/roboshop/<script>.sh.log` (watch a long step with `tail -f` in a 2nd SSH session).
+
+> **Shipping on a new RHEL 9 server:** newer RHEL crypto packages can make the Java build fail with `X25519MLKEM768`. v1 doesn't have the fix; it's in v2: [`08-shipping.sh`](https://github.com/Abhignadumpala/shellscript-roboshop-v2/blob/main/08-shipping.sh) (`MAVEN_OPTS`) and [`shipping.service`](https://github.com/Abhignadumpala/shellscript-roboshop-v2/blob/main/shipping.service) (`ExecStart`).
+
+### Step 5: Check it works
+
+On the frontend server:
+```bash
+curl localhost/api/catalogue/health
+curl localhost/api/user/health
+curl localhost/api/cart/health
+curl localhost/api/shipping/health
+curl localhost/api/payment/health
+```
+All should answer with `OK` / `UP`.
+
+### Step 6: Open the shop in the browser
+
+1. Go to `http://<your-domain>`.
+2. **Register** a new user and log in.
+3. Add a product to the cart.
+4. Checkout → choose country and city for shipping.
+5. Pay → open **Order history**: your order is there ✅.
+
+### Step 7: Clean up
+
+Terminate all 10 servers so you don't pay for them (EC2 → select → Terminate, or `aws ec2 terminate-instances --instance-ids <ids>`). The SGs and hosted zone can stay for the next run.
 
 ---
 
